@@ -1,0 +1,34 @@
+@model List<SistemaCadeteriaMVC.Models.Cadete>
+
+<section>
+  <h1 class="text-center">Listado de cadetes</h1>
+  <div>
+    <table>
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>Nombre</th>
+          <th>Direccion</th>
+          <th>Telefono</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (var cadete in Model)
+        {
+          <tr>
+            <td>@cadete.Id</td>
+            <td>@cadete.Nombre</td>
+            <td>@cadete.Direccion</td>
+            <td>@cadete.Telefono</td>
+            <td>
+              @Html.ActionLink("Eliminar", "EliminarCadete", "Cadete", new{ id = cadete.Id })
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    <a asp-area="" asp-controller="Cadete" asp-action="CrearCadete">Crear Cadete</a>
+    <a asp-area="" asp-controller="Cadete" asp-action="RestaurarDatos">Restaurar Datos</a>
+  </div>
+</section>

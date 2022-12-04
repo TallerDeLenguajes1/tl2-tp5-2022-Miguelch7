@@ -1,0 +1,17 @@
+@model List<SistemaCadeteriaMVC.Models.Cadete>
+
+<section>
+  <h1 class="text-center">Crear cadete</h1>
+  <form asp-controller="Cadete" asp-action="CrearCadete" method="POST" >
+    <label for="nombre"> Nombre: 
+      <input name="nombre" type="text" required>
+    </label>
+    <label for="direccion"> Direccion: 
+      <input name="direccion" type="text" required>
+    </label>
+    <label for="telefono"> Telefono:
+      <input name="telefono" type="text" required>
+    </label>
+    <input type="submit" value="Crear cadete">
+  </form>
+</section>
