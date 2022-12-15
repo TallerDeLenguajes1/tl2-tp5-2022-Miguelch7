@@ -1,0 +1,39 @@
+@model SistemaCadeteriaMVC.ViewModels.ListaPedidosViewModel
+
+<section>
+  <h1 class="text-center">Listado de pedidos</h1>
+  <div>
+    <table>
+      <thead>
+        <tr>
+          <th>Número Pedido</th>
+          <th>Observaciones</th>
+          <th>Realizado</th>
+          <th>IdCliente</th>
+          <th>IdCadete</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (var pedido in Model.ListadoPedidos!)
+        {
+          <tr>
+            <td>@pedido.NumeroPedido</td>
+            <td>@pedido.Observaciones</td>
+            <td>@pedido.Realizado</td>
+            <td>@pedido.IdCliente</td>
+            <td>@pedido.IdCadete</td>
+            <td>
+              @Html.ActionLink("Editar", "EditarPedido", "Pedido", new { numeroPedido = pedido.NumeroPedido } )
+            </td>
+            <td>
+              @Html.ActionLink("Eliminar", "EliminarPedido", "Pedido", new { numeroPedido = pedido.NumeroPedido })
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    <a asp-area="" asp-controller="Pedido" asp-action="CrearPedido">Crear Pedido</a>
+    <a asp-area="" asp-controller="Pedido" asp-action="RestaurarDatos">Restaurar Datos</a>
+  </div>
+</section>

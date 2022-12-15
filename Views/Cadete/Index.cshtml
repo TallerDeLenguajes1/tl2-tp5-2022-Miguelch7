@@ -1,4 +1,4 @@
-@model List<SistemaCadeteriaMVC.Models.Cadete>
+@model SistemaCadeteriaMVC.ViewModels.ListaCadetesViewModel
 
 <section>
   <h1 class="text-center">Listado de cadetes</h1>
@@ -14,13 +14,16 @@
         </tr>
       </thead>
       <tbody>
-        @foreach (var cadete in Model)
+        @foreach (var cadete in Model.ListadoCadetes!)
         {
           <tr>
             <td>@cadete.Id</td>
             <td>@cadete.Nombre</td>
             <td>@cadete.Direccion</td>
             <td>@cadete.Telefono</td>
+            <td>
+              @Html.ActionLink("Editar", "EditarCadete", "Cadete", new { id = cadete.Id } )
+            </td>
             <td>
               @Html.ActionLink("Eliminar", "EliminarCadete", "Cadete", new{ id = cadete.Id })
             </td>

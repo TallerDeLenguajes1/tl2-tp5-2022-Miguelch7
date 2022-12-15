@@ -1,0 +1,32 @@
+@model SistemaCadeteriaMVC.ViewModels.PedidoViewModel
+
+<section>
+  <h1 class="text-center">Editar pedido</h1>
+  <form asp-controller="Pedido" asp-action="EditarPedido" method="POST" >
+    <label asp-for="@Model.Observaciones"> @Html.DisplayNameFor(Model => Model.Observaciones) 
+      <input name="observaciones" type="text" value="@Model.Observaciones">
+    </label>
+    <span class="form-control" asp-validation-for="@Model.Observaciones"></span>
+
+    <label asp-for="@Model.Realizado"> @Html.DisplayNameFor(Model => Model.Realizado) 
+      <input name="realizado" type="text" value="@Model.Realizado">
+    </label>
+    <span class="form-control" asp-validation-for="@Model.Realizado"></span>
+
+    <label asp-for="@Model.IdCliente"> @Html.DisplayNameFor(Model => Model.IdCliente)
+      <input name="idCliente" type="text" value="@Model.IdCliente">
+    </label>
+    <span class="form-control" asp-validation-for="@Model.IdCliente"></span>
+
+    <label asp-for="@Model.IdCadete"> @Html.DisplayNameFor(Model => Model.IdCadete)
+      <input name="idCadete" type="text" value="@Model.IdCadete">
+    </label>
+    <span class="form-control" asp-validation-for="@Model.IdCadete"></span>
+
+    <input type="submit" value="Guardar cambios">
+  </form>
+</section>
+
+@section Scripts {
+  <partial name="_ValidationScriptsPartial" />
+}

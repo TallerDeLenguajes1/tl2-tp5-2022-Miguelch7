@@ -1,8 +1,8 @@
-@model SistemaCadeteriaMVC.ViewModels.CadeteViewModel
+@model SistemaCadeteriaMVC.ViewModels.ClienteViewModel
 
 <section>
-  <h1 class="text-center">Crear cadete</h1>
-  <form asp-controller="Cadete" asp-action="CrearCadete" method="POST" >
+  <h1 class="text-center">Crear cliente</h1>
+  <form asp-controller="Cliente" asp-action="CrearCliente" method="POST" >
     <label asp-for="@Model.Nombre"> @Html.DisplayNameFor(Model => Model.Nombre) 
       <input name="nombre" type="text" value="@Model.Nombre">
     </label>
@@ -14,11 +14,16 @@
     <span class="form-control" asp-validation-for="@Model.Direccion"></span>
 
     <label asp-for="@Model.Telefono"> @Html.DisplayNameFor(Model => Model.Telefono)
-      <input name="telefono" type="text" value="@Model.Telefono">
+      <input name="telefono" type="number" value="@Model.Telefono">
     </label>
     <span class="form-control" asp-validation-for="@Model.Telefono"></span>
 
-    <input type="submit" value="Crear cadete">
+    <label asp-for="@Model.Referencia"> @Html.DisplayNameFor(Model => Model.Referencia) 
+      <input name="referencia" type="text" value="@Model.Referencia">
+    </label>
+    <span class="form-control" asp-validation-for="@Model.Referencia"></span>
+
+    <input type="submit" value="Crear cliente">
   </form>
 </section>
 

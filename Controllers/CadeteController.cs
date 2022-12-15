@@ -5,66 +5,91 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using AutoMapper;
 using SistemaCadeteriaMVC.Models;
+using SistemaCadeteriaMVC.ViewModels;
 
 namespace SistemaCadeteriaMVC.Controllers;
 
 public class CadeteController : Controller
 {
     private readonly ILogger<CadeteController> _logger;
-    private static List<Cadete> ListadoCadetes = new List<Cadete>()!;
+    private IMapper _mapper;
+    private readonly IRepositorioCadetes _repositorioCadetes;
 
-    public CadeteController(ILogger<CadeteController> logger)
+    public CadeteController(ILogger<CadeteController> logger, IMapper mapper, IRepositorioCadetes repositorioCadetes)
     {
         _logger = logger;
+        _mapper = mapper;
+        _repositorioCadetes = repositorioCadetes;
     }
 
     public IActionResult Index()
     {
-        return View(ListadoCadetes);
-    }
+        var cadetes = _repositorioCadetes.ObtenerCadetes();
 
-    [HttpGet]
-    public IActionResult RestaurarDatos()
-    {
-        string[] array;
-        List<Cadete> ListadoCadetesBackUp = new List<Cadete>();
-        
-        foreach (string s in System.IO.File.ReadAllLines("CSV/cadetes.csv"))
-        {
-            if (s != "")
-            {
-                array = s.Split(";");
-                ListadoCadetesBackUp.Add(
-                    new Cadete(Int32.Parse(array[0]), array[1], array[2], array[3])
-                );
-            }
-        }
+        var cadetesViewModel = _mapper.Map<List<CadeteViewModel>>(cadetes);
 
-        ListadoCadetes = ListadoCadetesBackUp;
-
-        return RedirectToAction("Index");
+        ListaCadetesViewModel listaCadetesViewModel = new ListaCadetesViewModel(cadetesViewModel);
+    
+        return View(listaCadetesViewModel);
     }
 
     [HttpGet]
     public IActionResult CrearCadete()
     {
-        return View();
+        return View(new CadeteViewModel());
     }
 
     [HttpPost]
-    public IActionResult CrearCadete(Cadete cadete)
+    public IActionResult CrearCadete(CadeteViewModel cadeteViewModel)
     {
-        ListadoCadetes!.Add(cadete);
-        return RedirectToAction("Index");
+        if (ModelState.IsValid)
+        {
+            var cadete = _mapper.Map<Cadete>(cadeteViewModel);
+            _repositorioCadetes.AgregarCadete(cadete);
+            return RedirectToAction("Index");
+        }
+        return View("CrearCadete", cadeteViewModel);
+    }
+
+    public IActionResult EditarCadete(int id)
+    {
+        var cadetes = _repositorioCadetes.ObtenerCadetes();
+
+        Cadete? cadete = cadetes.Find(c => c.Id == id);
+
+        if (cadete != null)
+        {
+            var cadeteViewModel = _mapper.Map<CadeteViewModel>(cadete);
+
+            return View(cadeteViewModel);
+        } 
+        else 
+        {
+            return RedirectToAction("Index");
+        }
+    }
+
+    [HttpPost]
+    public IActionResult EditarCadete(CadeteViewModel cadeteViewModel)
+    {
+        if (ModelState.IsValid)
+        {
+            var cadete = _mapper.Map<Cadete>(cadeteViewModel);
+
+            _repositorioCadetes.EditarCadete(cadete);
+
+            return RedirectToAction("Index");
+        }
+
+        return View("EditarCadete", cadeteViewModel);
     }
 
     [HttpGet]
     public IActionResult EliminarCadete(int id)
     {
-        ListadoCadetes!.Remove(
-            ListadoCadetes!.Find(cadete => cadete!.Id == id)!
-        );
+        _repositorioCadetes.EliminarCadete(id);
         return RedirectToAction("Index");
     }
 

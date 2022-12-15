@@ -11,27 +11,38 @@ namespace SistemaCadeteriaMVC.Models
         public int NumeroPedido { get; set; }
         public string? Observaciones { get; set; }
         public bool Realizado { get; set; }
-        public Cliente? Cliente { get; set; }
+        public int IdCliente { get; set; }
+        public int IdCadete { get; set; }
 
         public Pedido() {
             autonumerico++;
             this.NumeroPedido = autonumerico;
         }
 
-        public Pedido(Cliente cliente, string observaciones) {
+        public Pedido(string observaciones, int idCliente, int idCadete) {
             autonumerico++;
             this.NumeroPedido = autonumerico;
-            this.Cliente = cliente;
             this.Observaciones = observaciones;
             this.Realizado = false;
+            this.IdCliente = idCliente;
+            this.IdCadete = idCadete;
         }
 
-        public Pedido(Cliente cliente, string observaciones, bool realizado) {
+        public Pedido(string observaciones, bool realizado, int idCliente, int idCadete) {
             autonumerico++;
             this.NumeroPedido = autonumerico;
-            this.Cliente = cliente;
             this.Observaciones = observaciones;
             this.Realizado = realizado;
+            this.IdCadete = idCadete;
+            this.IdCliente = idCliente;
+        }
+
+        public Pedido(int numeroPedido, string observaciones, bool realizado, int idCliente, int idCadete) {
+            this.NumeroPedido = numeroPedido;
+            this.Observaciones = observaciones;
+            this.Realizado = realizado;
+            this.IdCadete = idCadete;
+            this.IdCliente = idCliente;
         }
     }
 }

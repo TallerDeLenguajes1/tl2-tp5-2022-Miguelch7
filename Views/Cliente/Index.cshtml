@@ -1,0 +1,39 @@
+@model SistemaCadeteriaMVC.ViewModels.ListaClientesViewModel
+
+<section>
+  <h1 class="text-center">Listado de clientes</h1>
+  <div>
+    <table>
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>Nombre</th>
+          <th>Direccion</th>
+          <th>Telefono</th>
+          <th>Referencia</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (var cliente in Model.ListadoClientes!)
+        {
+          <tr>
+            <td>@cliente.Id</td>
+            <td>@cliente.Nombre</td>
+            <td>@cliente.Direccion</td>
+            <td>@cliente.Telefono</td>
+            <td>@cliente.Referencia</td>
+            <td>
+              @Html.ActionLink("Editar", "EditarCliente", "Cliente", new { id = cliente.Id } )
+            </td>
+            <td>
+              @Html.ActionLink("Eliminar", "EliminarCliente", "Cliente", new{ id = cliente.Id })
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    <a asp-area="" asp-controller="Cliente" asp-action="CrearCliente">Crear Cliente</a>
+    <a asp-area="" asp-controller="Cliente" asp-action="RestaurarDatos">Restaurar Datos</a>
+  </div>
+</section>

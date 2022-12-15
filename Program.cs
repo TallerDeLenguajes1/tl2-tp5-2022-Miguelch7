@@ -1,7 +1,17 @@
+using AutoMapper;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// AutoMapper
+builder.Services.AddAutoMapper(typeof(Program));
+
+// Repositorios
+builder.Services.AddTransient<IRepositorioCadetes, RepositorioCadetes>();
+builder.Services.AddTransient<IRepositorioClientes, RepositorioClientes>();
+builder.Services.AddTransient<IRepositorioPedidos, RepositorioPedidos>();
 
 var app = builder.Build();
 
@@ -19,6 +29,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+
 
 app.MapControllerRoute(
     name: "default",

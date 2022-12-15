@@ -1,8 +1,8 @@
 @model SistemaCadeteriaMVC.ViewModels.CadeteViewModel
 
 <section>
-  <h1 class="text-center">Crear cadete</h1>
-  <form asp-controller="Cadete" asp-action="CrearCadete" method="POST" >
+  <h1 class="text-center">Editar cadete</h1>
+  <form asp-controller="Cadete" asp-action="EditarCadete" method="POST" >
     <label asp-for="@Model.Nombre"> @Html.DisplayNameFor(Model => Model.Nombre) 
       <input name="nombre" type="text" value="@Model.Nombre">
     </label>
@@ -18,7 +18,7 @@
     </label>
     <span class="form-control" asp-validation-for="@Model.Telefono"></span>
 
-    <input type="submit" value="Crear cadete">
+    <input type="submit" value="Guardar cambios">
   </form>
 </section>
 
