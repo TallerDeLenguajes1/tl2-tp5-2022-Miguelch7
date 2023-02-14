@@ -15,6 +15,8 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
+        if (HttpContext.Session.GetString("username") == null) return RedirectToAction("IniciarSesion", "Login");
+        
         return View("Index");
     }
 

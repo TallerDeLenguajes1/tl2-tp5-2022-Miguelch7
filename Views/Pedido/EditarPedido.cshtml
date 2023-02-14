@@ -1,3 +1,4 @@
+@using SistemaCadeteriaMVC.ViewModels
 @model SistemaCadeteriaMVC.ViewModels.PedidoViewModel
 
 <section class="flex w-full justify-center py-10 items-center bg-white">
@@ -15,6 +16,7 @@
     </div>
     <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
       <select id="estado" name="estado" class="pl-2 outline-none border-none w-full" placeholder="@Html.DisplayNameFor(Model => Model.Estado)">
+        <option value="@Estado.SinAsignar" disabled selected>-- Seleccione el estado --</option>
         <option value="@Estado.SinAsignar">Sin Asignar</option>
         <option value="@Estado.Pendiente">Pendiente</option>
         <option value="@Estado.EnCurso">En Curso</option>
@@ -22,24 +24,22 @@
       </select>
     </div>
     <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
-      <input
-        class="pl-2 outline-none border-none w-full"
-        type="number"
-        name="idCliente"
-        id="idCliente"
-        placeholder="@Html.DisplayNameFor(Model => Model.IdCliente)"
-        value="@Model.IdCliente"
-      />
+      <select id="idCliente" name="idCliente" class="pl-2 outline-none border-none w-full" placeholder="@Html.DisplayNameFor(Model => Model.IdCliente)">
+        <option value="@null">-- Seleccione el cadete --</option>
+        @foreach (var cliente in (List<ClienteViewModel>) ViewData["clientes"]!)
+        {
+          <option value="@cliente.Id">@cliente.Nombre</option>
+        }
+      </select>
     </div>
     <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
-      <input
-        class="pl-2 outline-none border-none w-full"
-        type="number"
-        name="idCadete"
-        id="idCadete"
-        placeholder="@Html.DisplayNameFor(Model => Model.IdCadete)"
-        value="@Model.IdCadete"
-      />
+      <select id="idCadete" name="idCadete" class="pl-2 outline-none border-none w-full" placeholder="@Html.DisplayNameFor(Model => Model.IdCadete)">
+        <option value="@null">-- Seleccione el cadete --</option>
+        @foreach (var cadete in (List<CadeteViewModel>) ViewData["cadetes"]!)
+        {
+          <option value="@cadete.Id">@cadete.Nombre</option>
+        }
+      </select>
     </div>
     <button
       type="submit"

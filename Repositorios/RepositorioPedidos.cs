@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using SistemaCadeteriaMVC.Models;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 using NLog;
 
 public interface IRepositorioPedidos
@@ -24,7 +24,7 @@ public class RepositorioPedidos : IRepositorioPedidos
   public RepositorioPedidos(IConfiguration configuration)
   {
     this._configuration = configuration;
-    this.ConnectionString = this._configuration.GetConnectionString("SQLite");
+    this.ConnectionString = this._configuration.GetConnectionString("Sqlite");
   }
 
   public List<Pedido> ObtenerPedidos()
@@ -35,13 +35,15 @@ public class RepositorioPedidos : IRepositorioPedidos
 
       string query = "SELECT * FROM pedido";
 
-      using(SQLiteConnection connection = new SQLiteConnection(ConnectionString))
+      using(SqliteConnection connection = new SqliteConnection(ConnectionString))
       {
         connection.Open();
 
-        SQLiteCommand command = new SQLiteCommand(query, connection);
+        SqliteCommand command = new SqliteCommand(query, connection);
+        RepositorioCadetes repositorioCadetes = new RepositorioCadetes(_configuration);
+        RepositorioClientes repositorioClientes = new RepositorioClientes(_configuration);
 
-        using(SQLiteDataReader reader = command.ExecuteReader())
+        using(SqliteDataReader reader = command.ExecuteReader())
         {
           while (reader.Read())
           {
@@ -50,8 +52,10 @@ public class RepositorioPedidos : IRepositorioPedidos
             Estado estado = (Estado) reader.GetInt32(2);
             int idCliente = reader.GetInt32(3);
             int idCadete = reader.GetInt32(4);
+            string? nombreCadete = repositorioCadetes.ObtenerCadetePorId(idCadete)?.Nombre;
+            string? nombreCliente = repositorioClientes.ObtenerClientePorId(idCliente)?.Nombre;
             
-            pedido.Add(new Pedido(numeroPedido, observaciones, estado, idCliente, idCadete));
+            pedido.Add(new Pedido(numeroPedido, observaciones, estado, idCliente, nombreCliente, idCadete, nombreCadete));
           }
         }
 
@@ -60,7 +64,7 @@ public class RepositorioPedidos : IRepositorioPedidos
 
       return pedido;
     }
-    catch (SQLiteException ex)
+    catch (SqliteException ex)
     {
       logger.Debug(ex.ToString());
       throw new Exception("ERROR!", ex);
@@ -75,15 +79,18 @@ public class RepositorioPedidos : IRepositorioPedidos
 
       string query = "SELECT * FROM pedido WHERE id_cliente = @idCliente";
 
-      using(SQLiteConnection connection = new SQLiteConnection(ConnectionString))
+      using(SqliteConnection connection = new SqliteConnection(ConnectionString))
       {
         connection.Open();
 
-        SQLiteCommand command = new SQLiteCommand(query, connection);
+        SqliteCommand command = new SqliteCommand(query, connection);
 
-        command.Parameters.Add(new SQLiteParameter("@idCliente", idCliente));
+        RepositorioCadetes repositorioCadetes = new RepositorioCadetes(_configuration);
+        RepositorioClientes repositorioClientes = new RepositorioClientes(_configuration);
 
-        using(SQLiteDataReader reader = command.ExecuteReader())
+        command.Parameters.Add(new SqliteParameter("@idCliente", idCliente));
+
+        using(SqliteDataReader reader = command.ExecuteReader())
         {
           while (reader.Read())
           {
@@ -92,8 +99,10 @@ public class RepositorioPedidos : IRepositorioPedidos
             Estado estado = (Estado) reader.GetInt32(2);
             int idClientePedido = reader.GetInt32(3);
             int idCadete = reader.GetInt32(4);
+            string? nombreCadete = repositorioCadetes.ObtenerCadetePorId(idCadete)?.Nombre;
+            string? nombreCliente = repositorioClientes.ObtenerClientePorId(idCliente)?.Nombre;
             
-            pedido.Add(new Pedido(numeroPedido, observaciones, estado, idClientePedido, idCadete));
+            pedido.Add(new Pedido(numeroPedido, observaciones, estado, idCliente, nombreCliente, idCadete, nombreCadete));
           }
         }
 
@@ -102,7 +111,7 @@ public class RepositorioPedidos : IRepositorioPedidos
 
       return pedido;
     }
-    catch (SQLiteException ex)
+    catch (SqliteException ex)
     {
       logger.Debug(ex.ToString());
       throw new Exception("ERROR!", ex);
@@ -117,15 +126,18 @@ public class RepositorioPedidos : IRepositorioPedidos
 
       string query = "SELECT * FROM pedido WHERE id_cadete = @idCadete";
 
-      using(SQLiteConnection connection = new SQLiteConnection(ConnectionString))
+      using(SqliteConnection connection = new SqliteConnection(ConnectionString))
       {
         connection.Open();
 
-        SQLiteCommand command = new SQLiteCommand(query, connection);
+        SqliteCommand command = new SqliteCommand(query, connection);
 
-        command.Parameters.Add(new SQLiteParameter("@idCadete", idCadete));
+        RepositorioCadetes repositorioCadetes = new RepositorioCadetes(_configuration);
+        RepositorioClientes repositorioClientes = new RepositorioClientes(_configuration);
 
-        using(SQLiteDataReader reader = command.ExecuteReader())
+        command.Parameters.Add(new SqliteParameter("@idCadete", idCadete));
+
+        using(SqliteDataReader reader = command.ExecuteReader())
         {
           while (reader.Read())
           {
@@ -134,8 +146,10 @@ public class RepositorioPedidos : IRepositorioPedidos
             Estado estado = (Estado) reader.GetInt32(2);
             int idCliente = reader.GetInt32(3);
             int idCadetePedido = reader.GetInt32(4);
+            string? nombreCadete = repositorioCadetes.ObtenerCadetePorId(idCadete)?.Nombre;
+            string? nombreCliente = repositorioClientes.ObtenerClientePorId(idCliente)?.Nombre;
             
-            pedido.Add(new Pedido(numeroPedido, observaciones, estado, idCliente, idCadetePedido));
+            pedido.Add(new Pedido(numeroPedido, observaciones, estado, idCliente, nombreCliente, idCadete, nombreCadete));
           }
         }
 
@@ -144,7 +158,7 @@ public class RepositorioPedidos : IRepositorioPedidos
 
       return pedido;
     }
-    catch (SQLiteException ex)
+    catch (SqliteException ex)
     {
       logger.Debug(ex.ToString());
       throw new Exception("ERROR!", ex);
@@ -159,15 +173,18 @@ public class RepositorioPedidos : IRepositorioPedidos
 
       string query = "SELECT * FROM pedido WHERE numero_pedido = @idPedido";
 
-      using(SQLiteConnection connection = new SQLiteConnection(ConnectionString))
+      using(SqliteConnection connection = new SqliteConnection(ConnectionString))
       {
         connection.Open();
 
-        SQLiteCommand command = new SQLiteCommand(query, connection);
+        SqliteCommand command = new SqliteCommand(query, connection);
 
-        command.Parameters.Add(new SQLiteParameter("@idPedido", idPedido));
+        RepositorioCadetes repositorioCadetes = new RepositorioCadetes(_configuration);
+        RepositorioClientes repositorioClientes = new RepositorioClientes(_configuration);
 
-        using (SQLiteDataReader reader = command.ExecuteReader())
+        command.Parameters.Add(new SqliteParameter("@idPedido", idPedido));
+
+        using (SqliteDataReader reader = command.ExecuteReader())
         {
           while (reader.Read())
           {
@@ -176,8 +193,10 @@ public class RepositorioPedidos : IRepositorioPedidos
             Estado estado = (Estado) reader.GetInt32(2);
             int idCliente = reader.GetInt32(3);
             int idCadete = reader.GetInt32(4);
+            string? nombreCadete = repositorioCadetes.ObtenerCadetePorId(idCadete)?.Nombre;
+            string? nombreCliente = repositorioClientes.ObtenerClientePorId(idCliente)?.Nombre;
             
-            pedido = new Pedido(numeroPedido, observaciones, estado, idCliente, idCadete);
+            pedido = new Pedido(numeroPedido, observaciones, estado, idCliente, nombreCliente, idCadete, nombreCadete);
           }
         }
 
@@ -186,7 +205,7 @@ public class RepositorioPedidos : IRepositorioPedidos
 
       return pedido;
     }
-    catch (SQLiteException ex)
+    catch (SqliteException ex)
     {
       logger.Debug(ex.ToString());
       throw new Exception("ERROR!", ex);
@@ -199,16 +218,16 @@ public class RepositorioPedidos : IRepositorioPedidos
     {
       string query = "INSERT INTO pedido (observaciones, estado, id_cliente, id_cadete) VALUES(@observaciones, @estado, @idCliente, @idCadete)";
 
-      using (SQLiteConnection connection = new SQLiteConnection(ConnectionString))
+      using (SqliteConnection connection = new SqliteConnection(ConnectionString))
       {
         connection.Open();
 
-        SQLiteCommand command = new SQLiteCommand(query, connection);
+        SqliteCommand command = new SqliteCommand(query, connection);
 
-        command.Parameters.Add(new SQLiteParameter("@observaciones", pedido.Observaciones));
-        command.Parameters.Add(new SQLiteParameter("@estado", pedido.Estado));
-        command.Parameters.Add(new SQLiteParameter("@idCliente", pedido.IdCliente));
-        command.Parameters.Add(new SQLiteParameter("@idCadete", pedido.IdCadete));
+        command.Parameters.Add(new SqliteParameter("@observaciones", pedido.Observaciones));
+        command.Parameters.Add(new SqliteParameter("@estado", pedido.Estado));
+        command.Parameters.Add(new SqliteParameter("@idCliente", pedido.IdCliente));
+        command.Parameters.Add(new SqliteParameter("@idCadete", pedido.IdCadete));
 
         command.ExecuteNonQuery();
 
@@ -217,7 +236,7 @@ public class RepositorioPedidos : IRepositorioPedidos
 
       logger.Info("El pedido se agregó correctamente");
     }
-    catch (SQLiteException ex)
+    catch (SqliteException ex)
     {
       logger.Debug(ex.ToString());
       throw new Exception("ERROR!", ex);
@@ -235,17 +254,17 @@ public class RepositorioPedidos : IRepositorioPedidos
     {
       string query = "UPDATE pedido SET observaciones = @observaciones, estado = @estado, id_cliente = @idCliente, id_cadete = @idCadete WHERE numero_pedido = @numeroPedido";
 
-      using (SQLiteConnection connection = new SQLiteConnection(ConnectionString))
+      using (SqliteConnection connection = new SqliteConnection(ConnectionString))
       {
         connection.Open();
 
-        SQLiteCommand command = new SQLiteCommand(query, connection);
+        SqliteCommand command = new SqliteCommand(query, connection);
 
-        command.Parameters.Add(new SQLiteParameter("@observaciones", pedido.Observaciones));
-        command.Parameters.Add(new SQLiteParameter("@estado", pedido.Estado));
-        command.Parameters.Add(new SQLiteParameter("@idCliente", pedido.IdCliente));
-        command.Parameters.Add(new SQLiteParameter("@idCadete", pedido.IdCadete));
-        command.Parameters.Add(new SQLiteParameter("@numeroPedido", pedido.NumeroPedido));
+        command.Parameters.Add(new SqliteParameter("@observaciones", pedido.Observaciones));
+        command.Parameters.Add(new SqliteParameter("@estado", pedido.Estado));
+        command.Parameters.Add(new SqliteParameter("@idCliente", pedido.IdCliente));
+        command.Parameters.Add(new SqliteParameter("@idCadete", pedido.IdCadete));
+        command.Parameters.Add(new SqliteParameter("@numeroPedido", pedido.NumeroPedido));
 
         command.ExecuteNonQuery();
 
@@ -254,7 +273,7 @@ public class RepositorioPedidos : IRepositorioPedidos
 
       logger.Info("El pedido se actualizó correctamente");
     }
-    catch (SQLiteException ex)
+    catch (SqliteException ex)
     {
       logger.Debug(ex.ToString());
       throw new Exception("ERROR!", ex);
@@ -273,13 +292,13 @@ public class RepositorioPedidos : IRepositorioPedidos
     {
       string query = "DELETE FROM pedido WHERE numero_pedido = @idPedido";
 
-      using (SQLiteConnection connection = new SQLiteConnection(ConnectionString))
+      using (SqliteConnection connection = new SqliteConnection(ConnectionString))
       {
         connection.Open();
 
-        SQLiteCommand command = new SQLiteCommand(query, connection);
+        SqliteCommand command = new SqliteCommand(query, connection);
 
-        command.Parameters.Add(new SQLiteParameter("@idPedido", idPedido));
+        command.Parameters.Add(new SqliteParameter("@idPedido", idPedido));
 
         command.ExecuteNonQuery();
 
@@ -288,7 +307,7 @@ public class RepositorioPedidos : IRepositorioPedidos
 
       logger.Info("El pedido se eliminó correctamente");
     }
-    catch (SQLiteException ex)
+    catch (SqliteException ex)
     {
       logger.Debug(ex.ToString());
       throw new Exception("ERROR!", ex);

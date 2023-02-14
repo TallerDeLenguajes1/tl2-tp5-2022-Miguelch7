@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using SistemaCadeteriaMVC.Models;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 using NLog;
 
 public interface IRepositorioCadetes
@@ -23,7 +23,7 @@ public class RepositorioCadetes : IRepositorioCadetes
   public RepositorioCadetes(IConfiguration configuration)
   {
     this._configuration = configuration;
-    this.ConnectionString = this._configuration.GetConnectionString("SQLite");
+    this.ConnectionString = this._configuration.GetConnectionString("Sqlite");
   }
 
   public List<Cadete> ObtenerCadetes()
@@ -34,13 +34,13 @@ public class RepositorioCadetes : IRepositorioCadetes
 
       string query = "SELECT * FROM cadete";
 
-      using(SQLiteConnection connection = new SQLiteConnection(ConnectionString))
+      using(SqliteConnection connection = new SqliteConnection(ConnectionString))
       {
         connection.Open();
 
-        SQLiteCommand command = new SQLiteCommand(query, connection);
+        SqliteCommand command = new SqliteCommand(query, connection);
 
-        using(SQLiteDataReader reader = command.ExecuteReader())
+        using(SqliteDataReader reader = command.ExecuteReader())
         {
           while (reader.Read())
           {
@@ -58,7 +58,7 @@ public class RepositorioCadetes : IRepositorioCadetes
 
       return cadetes;
     }
-    catch (SQLiteException ex)
+    catch (SqliteException ex)
     {
       logger.Debug(ex.ToString());
       throw new Exception("ERROR!", ex);
@@ -73,15 +73,15 @@ public class RepositorioCadetes : IRepositorioCadetes
 
       string query = "SELECT * FROM cadete WHERE id = @idCadete";
 
-      using(SQLiteConnection connection = new SQLiteConnection(ConnectionString))
+      using(SqliteConnection connection = new SqliteConnection(ConnectionString))
       {
         connection.Open();
 
-        SQLiteCommand command = new SQLiteCommand(query, connection);
+        SqliteCommand command = new SqliteCommand(query, connection);
 
-        command.Parameters.Add(new SQLiteParameter("@idCadete", idCadete));
+        command.Parameters.Add(new SqliteParameter("@idCadete", idCadete));
 
-        using (SQLiteDataReader reader = command.ExecuteReader())
+        using (SqliteDataReader reader = command.ExecuteReader())
         {
           while (reader.Read())
           {
@@ -99,7 +99,7 @@ public class RepositorioCadetes : IRepositorioCadetes
 
       return cadete;
     }
-    catch (SQLiteException ex)
+    catch (SqliteException ex)
     {
       logger.Debug(ex.ToString());
       throw new Exception("ERROR!", ex);
@@ -112,15 +112,15 @@ public class RepositorioCadetes : IRepositorioCadetes
     {
       string query = $"INSERT INTO cadete (nombre, direccion, telefono) VALUES(@nombre, @direccion, @telefono)";
 
-      using (SQLiteConnection connection = new SQLiteConnection(ConnectionString))
+      using (SqliteConnection connection = new SqliteConnection(ConnectionString))
       {
         connection.Open();
 
-        SQLiteCommand command = new SQLiteCommand(query, connection);
+        SqliteCommand command = new SqliteCommand(query, connection);
 
-        command.Parameters.Add(new SQLiteParameter("@nombre", cadete.Nombre));
-        command.Parameters.Add(new SQLiteParameter("@direccion", cadete.Direccion));
-        command.Parameters.Add(new SQLiteParameter("@telefono", cadete.Telefono));
+        command.Parameters.Add(new SqliteParameter("@nombre", cadete.Nombre));
+        command.Parameters.Add(new SqliteParameter("@direccion", cadete.Direccion));
+        command.Parameters.Add(new SqliteParameter("@telefono", cadete.Telefono));
 
         command.ExecuteNonQuery();
         
@@ -129,7 +129,7 @@ public class RepositorioCadetes : IRepositorioCadetes
 
       logger.Info("Se agregó el cadete exitosamente");
     }
-    catch (SQLiteException ex)
+    catch (SqliteException ex)
     {
       logger.Debug(ex.ToString());
       throw new Exception("ERROR!", ex);
@@ -147,16 +147,16 @@ public class RepositorioCadetes : IRepositorioCadetes
     {
       string query = "UPDATE cadete SET nombre = @nombre, direccion = @direccion, telefono = @telefono WHERE id = @idCadete";
 
-      using (SQLiteConnection connection = new SQLiteConnection(ConnectionString))
+      using (SqliteConnection connection = new SqliteConnection(ConnectionString))
       {
         connection.Open();
 
-        SQLiteCommand command = new SQLiteCommand(query, connection);
+        SqliteCommand command = new SqliteCommand(query, connection);
 
-        command.Parameters.Add(new SQLiteParameter("@idCadete", cadete.Id));
-        command.Parameters.Add(new SQLiteParameter("@nombre", cadete.Nombre));
-        command.Parameters.Add(new SQLiteParameter("@direccion", cadete.Direccion));
-        command.Parameters.Add(new SQLiteParameter("@telefono", cadete.Telefono));
+        command.Parameters.Add(new SqliteParameter("@idCadete", cadete.Id));
+        command.Parameters.Add(new SqliteParameter("@nombre", cadete.Nombre));
+        command.Parameters.Add(new SqliteParameter("@direccion", cadete.Direccion));
+        command.Parameters.Add(new SqliteParameter("@telefono", cadete.Telefono));
         
         command.ExecuteNonQuery();
 
@@ -165,7 +165,7 @@ public class RepositorioCadetes : IRepositorioCadetes
 
       logger.Info("El cadete se actualizó correctamente");
     }
-    catch (SQLiteException ex)
+    catch (SqliteException ex)
     {
       logger.Debug(ex.ToString());
       throw new Exception("ERROR!", ex);
@@ -184,13 +184,13 @@ public class RepositorioCadetes : IRepositorioCadetes
     {
       string query = "DELETE FROM cadete WHERE id = @idCadete";
 
-      using (SQLiteConnection connection = new SQLiteConnection(ConnectionString))
+      using (SqliteConnection connection = new SqliteConnection(ConnectionString))
       {
         connection.Open();
 
-        SQLiteCommand command = new SQLiteCommand(query, connection);
+        SqliteCommand command = new SqliteCommand(query, connection);
 
-        command.Parameters.Add(new SQLiteParameter("@idCadete", idCadete));
+        command.Parameters.Add(new SqliteParameter("@idCadete", idCadete));
 
         command.ExecuteNonQuery();
 
@@ -199,7 +199,7 @@ public class RepositorioCadetes : IRepositorioCadetes
 
       logger.Info("El cadete se eliminó correctamente");
     }
-    catch (SQLiteException ex)
+    catch (SqliteException ex)
     {
       logger.Debug(ex.ToString());
       throw new Exception("ERROR!", ex);

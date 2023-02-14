@@ -65,11 +65,14 @@
           </tbody>
         </table>
       </div>
-      <a 
-        class="bg-indigo-600 mt-4 py-2 px-4 rounded-2xl text-white font-semibold mb-2"
-        asp-controller="Cliente" 
-        asp-action="CrearCliente"
-      >Crear Cliente</a>
+      @if (Context.Session.GetString("rol") == "Administrador")
+      {
+        <a 
+          class="bg-indigo-600 mt-4 py-2 px-4 rounded-2xl text-white font-semibold mb-2"
+          asp-controller="Cliente" 
+          asp-action="CrearCliente"
+        >Crear Cliente</a>
+      }
     </div>
   </div>
 </div>

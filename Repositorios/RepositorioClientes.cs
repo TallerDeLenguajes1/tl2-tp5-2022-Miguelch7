@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using SistemaCadeteriaMVC.Models;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 using NLog;
 
 public interface IRepositorioClientes
@@ -23,7 +23,7 @@ public class RepositorioClientes : IRepositorioClientes
   public RepositorioClientes(IConfiguration configuration)
   {
     this._configuration = configuration;
-    this.ConnectionString = this._configuration.GetConnectionString("SQLite");
+    this.ConnectionString = this._configuration.GetConnectionString("Sqlite");
   }
 
   public List<Cliente> ObtenerClientes()
@@ -34,13 +34,13 @@ public class RepositorioClientes : IRepositorioClientes
 
       string query = "SELECT * FROM cliente";
 
-      using(SQLiteConnection connection = new SQLiteConnection(ConnectionString))
+      using(SqliteConnection connection = new SqliteConnection(ConnectionString))
       {
         connection.Open();
 
-        SQLiteCommand command = new SQLiteCommand(query, connection);
+        SqliteCommand command = new SqliteCommand(query, connection);
 
-        using(SQLiteDataReader reader = command.ExecuteReader())
+        using(SqliteDataReader reader = command.ExecuteReader())
         {
           while (reader.Read())
           {
@@ -59,7 +59,7 @@ public class RepositorioClientes : IRepositorioClientes
 
       return cliente;
     }
-    catch (SQLiteException ex)
+    catch (SqliteException ex)
     {
       logger.Debug(ex.ToString());
       throw new Exception("ERROR!", ex);
@@ -74,15 +74,15 @@ public class RepositorioClientes : IRepositorioClientes
 
       string query = "SELECT * FROM cliente WHERE id = @idCliente";
 
-      using(SQLiteConnection connection = new SQLiteConnection(ConnectionString))
+      using(SqliteConnection connection = new SqliteConnection(ConnectionString))
       {
         connection.Open();
 
-        SQLiteCommand command = new SQLiteCommand(query, connection);
+        SqliteCommand command = new SqliteCommand(query, connection);
 
-        command.Parameters.Add(new SQLiteParameter("@idCliente", idCliente));
+        command.Parameters.Add(new SqliteParameter("@idCliente", idCliente));
 
-        using (SQLiteDataReader reader = command.ExecuteReader())
+        using (SqliteDataReader reader = command.ExecuteReader())
         {
           while (reader.Read())
           {
@@ -101,7 +101,7 @@ public class RepositorioClientes : IRepositorioClientes
 
       return cliente;
     }
-    catch (SQLiteException ex)
+    catch (SqliteException ex)
     {
       logger.Debug(ex.ToString());
       throw new Exception("ERROR!", ex);
@@ -114,16 +114,16 @@ public class RepositorioClientes : IRepositorioClientes
     {
       string query = "INSERT INTO cliente (nombre, direccion, telefono, referencia) VALUES(@nombre, @direccion, @telefono, @referencia)";
 
-      using (SQLiteConnection connection = new SQLiteConnection(ConnectionString))
+      using (SqliteConnection connection = new SqliteConnection(ConnectionString))
       {
         connection.Open();
 
-        SQLiteCommand command = new SQLiteCommand(query, connection);
+        SqliteCommand command = new SqliteCommand(query, connection);
 
-        command.Parameters.Add(new SQLiteParameter("@nombre", cliente.Nombre));
-        command.Parameters.Add(new SQLiteParameter("@direccion", cliente.Direccion));
-        command.Parameters.Add(new SQLiteParameter("@telefono", cliente.Telefono));
-        command.Parameters.Add(new SQLiteParameter("@referencia", cliente.Referencia));
+        command.Parameters.Add(new SqliteParameter("@nombre", cliente.Nombre));
+        command.Parameters.Add(new SqliteParameter("@direccion", cliente.Direccion));
+        command.Parameters.Add(new SqliteParameter("@telefono", cliente.Telefono));
+        command.Parameters.Add(new SqliteParameter("@referencia", cliente.Referencia));
 
         command.ExecuteNonQuery();
 
@@ -132,7 +132,7 @@ public class RepositorioClientes : IRepositorioClientes
 
       logger.Info("El cliente se agregó correctamente");
     }
-    catch (SQLiteException ex)
+    catch (SqliteException ex)
     {
       logger.Debug(ex.ToString());
       throw new Exception("ERROR!", ex);
@@ -150,17 +150,17 @@ public class RepositorioClientes : IRepositorioClientes
     {
       string query = "UPDATE cliente SET nombre = @nombre, direccion = @direccion, telefono = @telefono, referencia = @referencia WHERE id = @idCliente";
 
-      using (SQLiteConnection connection = new SQLiteConnection(ConnectionString))
+      using (SqliteConnection connection = new SqliteConnection(ConnectionString))
       {
         connection.Open();
 
-        SQLiteCommand command = new SQLiteCommand(query, connection);
+        SqliteCommand command = new SqliteCommand(query, connection);
 
-        command.Parameters.Add(new SQLiteParameter("@idCliente", cliente.Id));
-        command.Parameters.Add(new SQLiteParameter("@nombre", cliente.Nombre));
-        command.Parameters.Add(new SQLiteParameter("@direccion", cliente.Direccion));
-        command.Parameters.Add(new SQLiteParameter("@telefono", cliente.Telefono));
-        command.Parameters.Add(new SQLiteParameter("@referencia", cliente.Referencia));
+        command.Parameters.Add(new SqliteParameter("@idCliente", cliente.Id));
+        command.Parameters.Add(new SqliteParameter("@nombre", cliente.Nombre));
+        command.Parameters.Add(new SqliteParameter("@direccion", cliente.Direccion));
+        command.Parameters.Add(new SqliteParameter("@telefono", cliente.Telefono));
+        command.Parameters.Add(new SqliteParameter("@referencia", cliente.Referencia));
         
         command.ExecuteNonQuery();
 
@@ -169,7 +169,7 @@ public class RepositorioClientes : IRepositorioClientes
 
       logger.Info("El cliente se actualizó correctamente");
     }
-    catch (SQLiteException ex)
+    catch (SqliteException ex)
     {
       logger.Debug(ex.ToString());
       throw new Exception("ERROR!", ex);
@@ -188,13 +188,13 @@ public class RepositorioClientes : IRepositorioClientes
     {
       string query = "DELETE FROM cliente WHERE id = @idCliente";
 
-      using (SQLiteConnection connection = new SQLiteConnection(ConnectionString))
+      using (SqliteConnection connection = new SqliteConnection(ConnectionString))
       {
         connection.Open();
 
-        SQLiteCommand command = new SQLiteCommand(query, connection);
+        SqliteCommand command = new SqliteCommand(query, connection);
 
-        command.Parameters.Add(new SQLiteParameter("@idCliente", idCliente));
+        command.Parameters.Add(new SqliteParameter("@idCliente", idCliente));
 
         command.ExecuteNonQuery();
 
@@ -203,7 +203,7 @@ public class RepositorioClientes : IRepositorioClientes
 
       logger.Info("El cliente se eliminó correctamente");
     }
-    catch (SQLiteException ex)
+    catch (SqliteException ex)
     {
       logger.Debug(ex.ToString());
       throw new Exception("ERROR!", ex);

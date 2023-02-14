@@ -10,8 +10,8 @@
               <th class="py-3 px-6 text-center">Número Pedido</th>
               <th class="py-3 px-6 text-center">Observaciones</th>
               <th class="py-3 px-6 text-center">Estado</th>
-              <th class="py-3 px-6 text-center">IdCliente</th>
-              <th class="py-3 px-6 text-center">IdCadete</th>
+              <th class="py-3 px-6 text-center">Cliente</th>
+              <th class="py-3 px-6 text-center">Cadete</th>
               @if (Context.Session.GetString("rol") == "Administrador")
               {
                 <th class="py-3 px-6 text-center">Acciones</th>
@@ -39,12 +39,12 @@
                   </td>
                   <td class="py-3 px-6 text-center">
                     <div class="flex item-center justify-center">
-                      <span>@pedido.IdCliente</span>
+                      <span>@pedido.NombreCliente</span>
                     </div>
                   </td>
                   <td class="py-3 px-6 text-center">
                     <div class="flex item-center justify-center">
-                      <span>@pedido.IdCadete</span>
+                      <span>@pedido.NombreCadete</span>
                     </div>
                   </td>
                   @if (Context.Session.GetString("rol") == "Administrador")
@@ -65,11 +65,14 @@
           </tbody>
         </table>
       </div>
-      <a 
-        class="bg-indigo-600 mt-4 py-2 px-4 rounded-2xl text-white font-semibold mb-2"
-        asp-controller="Pedido" 
-        asp-action="CrearPedido"
-      >Crear Pedido</a>
+      @if (Context.Session.GetString("rol") == "Administrador")
+      {
+        <a 
+          class="bg-indigo-600 mt-4 py-2 px-4 rounded-2xl text-white font-semibold mb-2"
+          asp-controller="Pedido" 
+          asp-action="CrearPedido"
+        >Crear Pedido</a>
+      }
     </div>
   </div>
 </div>

@@ -16,12 +16,16 @@ public class PedidoController : Controller
     private readonly ILogger<CadeteController> _logger;
     private IMapper _mapper;
     private readonly IRepositorioPedidos _repositorioPedidos;
+    private readonly IRepositorioCadetes _repositorioCadetes;
+    private readonly IRepositorioClientes _repositorioClientes;
 
-    public PedidoController(ILogger<CadeteController> logger, IMapper mapper, IRepositorioPedidos repositorioPedidos)
+    public PedidoController(ILogger<CadeteController> logger, IMapper mapper, IRepositorioPedidos repositorioPedidos, IRepositorioCadetes repositorioCadetes, IRepositorioClientes repositorioClientes)
     {
         _logger = logger;
         _mapper = mapper;
         _repositorioPedidos = repositorioPedidos;
+        _repositorioCadetes = repositorioCadetes;
+        _repositorioClientes = repositorioClientes;
     }
 
     public IActionResult Index()
@@ -49,6 +53,9 @@ public class PedidoController : Controller
     {
         string? rol = HttpContext.Session.GetString("rol");
         if(rol != "Administrador") return RedirectToAction("Index");
+
+        ViewData["clientes"] = _mapper.Map<List<ClienteViewModel>>(_repositorioClientes.ObtenerClientes());
+        ViewData["cadetes"] = _mapper.Map<List<CadeteViewModel>>(_repositorioCadetes.ObtenerCadetes());
         
         return View(new PedidoViewModel());
     }
@@ -87,6 +94,9 @@ public class PedidoController : Controller
             if (pedido != null)
             {
                 var pedidoViewModel = _mapper.Map<PedidoViewModel>(pedido);
+
+                ViewData["clientes"] = _mapper.Map<List<ClienteViewModel>>(_repositorioClientes.ObtenerClientes());
+                ViewData["cadetes"] = _mapper.Map<List<CadeteViewModel>>(_repositorioCadetes.ObtenerCadetes());
 
                 return View(pedidoViewModel);
             } 

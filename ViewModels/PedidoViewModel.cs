@@ -1,13 +1,6 @@
 using System.ComponentModel.DataAnnotations;
+using SistemaCadeteriaMVC.Models;
 namespace SistemaCadeteriaMVC.ViewModels;
-
-public enum Estado
-{
-  SinAsignar,
-  Pendiente,
-  EnCurso,
-  Entregado
-}
 
 public class PedidoViewModel
 {
@@ -23,8 +16,10 @@ public class PedidoViewModel
   [Display(Name = "Cadete del pedido")]
   [Required]
   public int IdCadete { get; set; }
+  public string? NombreCadete { get; set; }
 
   [Display(Name = "Cliente del pedido")]
   [Required]
   public int IdCliente { get; set; }
+  public string? NombreCliente { get; set; }
 }

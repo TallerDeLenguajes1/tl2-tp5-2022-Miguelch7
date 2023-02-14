@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using SistemaCadeteriaMVC.ViewModels;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 using NLog;
 
 public interface IRepositorioUsuarios
@@ -19,15 +19,15 @@ public class RepositorioUsuarios : IRepositorioUsuarios
   public RepositorioUsuarios(IConfiguration configuration)
   {
     this._configuration = configuration;
-    this.ConnectionString = this._configuration.GetConnectionString("SQLite");
+    this.ConnectionString = this._configuration.GetConnectionString("Sqlite");
   }
 
   public UsuarioViewModel Login(string username, string password)
   {
     UsuarioViewModel? user = null;
 
-    SQLiteConnection connection = new SQLiteConnection(ConnectionString);
-    SQLiteCommand command = new();
+    SqliteConnection connection = new SqliteConnection(ConnectionString);
+    SqliteCommand command = new();
     connection.Open();
 
     command.Connection = connection;
