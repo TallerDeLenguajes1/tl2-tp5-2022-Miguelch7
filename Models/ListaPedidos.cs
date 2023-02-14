@@ -36,7 +36,7 @@ public class ListaPedidos
     if (pedido != null)
     {
       pedido.Observaciones = nuevoPedido.Observaciones;
-      pedido.Realizado = nuevoPedido.Realizado;
+      pedido.Estado = nuevoPedido.Estado;
       pedido.IdCliente = nuevoPedido.IdCliente;
       pedido.IdCadete = nuevoPedido.IdCadete;
     }

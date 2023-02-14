@@ -47,11 +47,11 @@ public class RepositorioPedidos : IRepositorioPedidos
           {
             int numeroPedido = reader.GetInt32(0);
             string observaciones = reader[1].ToString()!;
-            bool realizado = reader.GetBoolean(2);
+            Estado estado = (Estado) reader.GetInt32(2);
             int idCliente = reader.GetInt32(3);
             int idCadete = reader.GetInt32(4);
             
-            pedido.Add(new Pedido(numeroPedido, observaciones, realizado, idCliente, idCadete));
+            pedido.Add(new Pedido(numeroPedido, observaciones, estado, idCliente, idCadete));
           }
         }
 
@@ -89,11 +89,11 @@ public class RepositorioPedidos : IRepositorioPedidos
           {
             int numeroPedido = reader.GetInt32(0);
             string observaciones = reader[1].ToString()!;
-            bool realizado = reader.GetBoolean(2);
+            Estado estado = (Estado) reader.GetInt32(2);
             int idClientePedido = reader.GetInt32(3);
             int idCadete = reader.GetInt32(4);
             
-            pedido.Add(new Pedido(numeroPedido, observaciones, realizado, idClientePedido, idCadete));
+            pedido.Add(new Pedido(numeroPedido, observaciones, estado, idClientePedido, idCadete));
           }
         }
 
@@ -131,11 +131,11 @@ public class RepositorioPedidos : IRepositorioPedidos
           {
             int numeroPedido = reader.GetInt32(0);
             string observaciones = reader[1].ToString()!;
-            bool realizado = reader.GetBoolean(2);
+            Estado estado = (Estado) reader.GetInt32(2);
             int idCliente = reader.GetInt32(3);
             int idCadetePedido = reader.GetInt32(4);
             
-            pedido.Add(new Pedido(numeroPedido, observaciones, realizado, idCliente, idCadetePedido));
+            pedido.Add(new Pedido(numeroPedido, observaciones, estado, idCliente, idCadetePedido));
           }
         }
 
@@ -157,7 +157,7 @@ public class RepositorioPedidos : IRepositorioPedidos
     {
       Pedido? pedido = null;
 
-      string query = "SELECT * FROM pedido WHERE id = @idPedido";
+      string query = "SELECT * FROM pedido WHERE numero_pedido = @idPedido";
 
       using(SQLiteConnection connection = new SQLiteConnection(ConnectionString))
       {
@@ -173,11 +173,11 @@ public class RepositorioPedidos : IRepositorioPedidos
           {
             int numeroPedido = reader.GetInt32(0);
             string observaciones = reader[1].ToString()!;
-            bool realizado = reader.GetBoolean(2);
+            Estado estado = (Estado) reader.GetInt32(2);
             int idCliente = reader.GetInt32(3);
             int idCadete = reader.GetInt32(4);
             
-            pedido = new Pedido(numeroPedido, observaciones, realizado, idCliente, idCadete);
+            pedido = new Pedido(numeroPedido, observaciones, estado, idCliente, idCadete);
           }
         }
 
@@ -197,7 +197,7 @@ public class RepositorioPedidos : IRepositorioPedidos
   {
     try
     {
-      string query = "INSERT INTO pedido (observaciones, realizado, id_cliente, id_cadete) VALUES(@observaciones, @realizado, @idCliente, @idCadete)";
+      string query = "INSERT INTO pedido (observaciones, estado, id_cliente, id_cadete) VALUES(@observaciones, @estado, @idCliente, @idCadete)";
 
       using (SQLiteConnection connection = new SQLiteConnection(ConnectionString))
       {
@@ -206,7 +206,7 @@ public class RepositorioPedidos : IRepositorioPedidos
         SQLiteCommand command = new SQLiteCommand(query, connection);
 
         command.Parameters.Add(new SQLiteParameter("@observaciones", pedido.Observaciones));
-        command.Parameters.Add(new SQLiteParameter("@realizado", pedido.Realizado));
+        command.Parameters.Add(new SQLiteParameter("@estado", pedido.Estado));
         command.Parameters.Add(new SQLiteParameter("@idCliente", pedido.IdCliente));
         command.Parameters.Add(new SQLiteParameter("@idCadete", pedido.IdCadete));
 
@@ -233,7 +233,7 @@ public class RepositorioPedidos : IRepositorioPedidos
   {
     try
     {
-      string query = "UPDATE pedido SET observaciones = @observaciones, realizado = @realizado, id_cliente = @idCliente, id_cadete = @idCadete WHERE id = @idPedido";
+      string query = "UPDATE pedido SET observaciones = @observaciones, estado = @estado, id_cliente = @idCliente, id_cadete = @idCadete WHERE numero_pedido = @numeroPedido";
 
       using (SQLiteConnection connection = new SQLiteConnection(ConnectionString))
       {
@@ -241,12 +241,12 @@ public class RepositorioPedidos : IRepositorioPedidos
 
         SQLiteCommand command = new SQLiteCommand(query, connection);
 
-        command.Parameters.Add(new SQLiteParameter("@idPedido", pedido.NumeroPedido));
         command.Parameters.Add(new SQLiteParameter("@observaciones", pedido.Observaciones));
-        command.Parameters.Add(new SQLiteParameter("@realizado", pedido.Realizado));
+        command.Parameters.Add(new SQLiteParameter("@estado", pedido.Estado));
         command.Parameters.Add(new SQLiteParameter("@idCliente", pedido.IdCliente));
         command.Parameters.Add(new SQLiteParameter("@idCadete", pedido.IdCadete));
-        
+        command.Parameters.Add(new SQLiteParameter("@numeroPedido", pedido.NumeroPedido));
+
         command.ExecuteNonQuery();
 
         connection.Close();
@@ -271,7 +271,7 @@ public class RepositorioPedidos : IRepositorioPedidos
   {
     try
     {
-      string query = "DELETE FROM pedido WHERE id = @idPedido";
+      string query = "DELETE FROM pedido WHERE numero_pedido = @idPedido";
 
       using (SQLiteConnection connection = new SQLiteConnection(ConnectionString))
       {

@@ -26,46 +26,77 @@ public class CadeteController : Controller
 
     public IActionResult Index()
     {
-        var cadetes = _repositorioCadetes.ObtenerCadetes();
+        try 
+        {
+            if (HttpContext.Session.GetString("username") == null) return RedirectToAction("IniciarSesion", "Login");
+            
+            var cadetes = _repositorioCadetes.ObtenerCadetes();
 
-        var cadetesViewModel = _mapper.Map<List<CadeteViewModel>>(cadetes);
+            var cadetesViewModel = _mapper.Map<List<CadeteViewModel>>(cadetes);
 
-        ListaCadetesViewModel listaCadetesViewModel = new ListaCadetesViewModel(cadetesViewModel);
-    
-        return View(listaCadetesViewModel);
+            ListaCadetesViewModel listaCadetesViewModel = new ListaCadetesViewModel(cadetesViewModel);
+        
+            return View(listaCadetesViewModel);
+        }
+        catch (System.Exception)
+        {
+            return View(new ListaCadetesViewModel(new List<CadeteViewModel>()));
+        }
     }
 
     [HttpGet]
     public IActionResult CrearCadete()
     {
+        string? rol = HttpContext.Session.GetString("rol");
+        if (rol != "Administrador") return RedirectToAction("Index");
+
         return View(new CadeteViewModel());
     }
 
     [HttpPost]
     public IActionResult CrearCadete(CadeteViewModel cadeteViewModel)
     {
-        if (ModelState.IsValid)
+        try
         {
-            var cadete = _mapper.Map<Cadete>(cadeteViewModel);
-            _repositorioCadetes.AgregarCadete(cadete);
+            string? rol = HttpContext.Session.GetString("rol");
+            if (rol != "Administrador") return RedirectToAction("Index", "Cadete");
+
+            if (ModelState.IsValid)
+            {
+                var cadete = _mapper.Map<Cadete>(cadeteViewModel);
+                _repositorioCadetes.AgregarCadete(cadete);
+                return RedirectToAction("Index");
+            }
+            return View("CrearCadete", cadeteViewModel);
+        }
+        catch (System.Exception)
+        {
             return RedirectToAction("Index");
         }
-        return View("CrearCadete", cadeteViewModel);
     }
 
     public IActionResult EditarCadete(int id)
     {
-        var cadetes = _repositorioCadetes.ObtenerCadetes();
-
-        Cadete? cadete = cadetes.Find(c => c.Id == id);
-
-        if (cadete != null)
+        try
         {
-            var cadeteViewModel = _mapper.Map<CadeteViewModel>(cadete);
+            string? rol = HttpContext.Session.GetString("rol");
+            if (rol != "Administrador") return RedirectToAction("Index");
+            var cadetes = _repositorioCadetes.ObtenerCadetes();
 
-            return View(cadeteViewModel);
-        } 
-        else 
+            Cadete? cadete = cadetes.Find(c => c.Id == id);
+
+            if (cadete != null)
+            {
+                var cadeteViewModel = _mapper.Map<CadeteViewModel>(cadete);
+
+                return View(cadeteViewModel);
+            } 
+            else 
+            {
+                return RedirectToAction("Index");
+            }
+        }
+        catch (System.Exception)
         {
             return RedirectToAction("Index");
         }
@@ -74,23 +105,43 @@ public class CadeteController : Controller
     [HttpPost]
     public IActionResult EditarCadete(CadeteViewModel cadeteViewModel)
     {
-        if (ModelState.IsValid)
+        try
         {
-            var cadete = _mapper.Map<Cadete>(cadeteViewModel);
+            string? rol = HttpContext.Session.GetString("rol");
+            if (rol != "Administrador") return RedirectToAction("Index");
 
-            _repositorioCadetes.EditarCadete(cadete);
+            if (ModelState.IsValid)
+            {
+                var cadete = _mapper.Map<Cadete>(cadeteViewModel);
 
+                _repositorioCadetes.EditarCadete(cadete);
+
+                return RedirectToAction("Index");
+            }
+
+            return View("EditarCadete", cadeteViewModel);
+        }
+        catch (System.Exception)
+        {
             return RedirectToAction("Index");
         }
-
-        return View("EditarCadete", cadeteViewModel);
     }
 
     [HttpGet]
     public IActionResult EliminarCadete(int id)
     {
-        _repositorioCadetes.EliminarCadete(id);
-        return RedirectToAction("Index");
+        try
+        {
+            string? rol = HttpContext.Session.GetString("rol");
+            if (rol != "Administrador") return RedirectToAction("Index");
+
+            _repositorioCadetes.EliminarCadete(id);
+            return RedirectToAction("Index");
+        }
+        catch (System.Exception)
+        {
+            return RedirectToAction("Index");
+        }
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

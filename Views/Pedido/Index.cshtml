@@ -1,39 +1,75 @@
 @model SistemaCadeteriaMVC.ViewModels.ListaPedidosViewModel
 
-<section>
-  <h1 class="text-center">Listado de pedidos</h1>
-  <div>
-    <table>
-      <thead>
-        <tr>
-          <th>Número Pedido</th>
-          <th>Observaciones</th>
-          <th>Realizado</th>
-          <th>IdCliente</th>
-          <th>IdCadete</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        @foreach (var pedido in Model.ListadoPedidos!)
-        {
-          <tr>
-            <td>@pedido.NumeroPedido</td>
-            <td>@pedido.Observaciones</td>
-            <td>@pedido.Realizado</td>
-            <td>@pedido.IdCliente</td>
-            <td>@pedido.IdCadete</td>
-            <td>
-              @Html.ActionLink("Editar", "EditarPedido", "Pedido", new { numeroPedido = pedido.NumeroPedido } )
-            </td>
-            <td>
-              @Html.ActionLink("Eliminar", "EliminarPedido", "Pedido", new { numeroPedido = pedido.NumeroPedido })
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
-    <a asp-area="" asp-controller="Pedido" asp-action="CrearPedido">Crear Pedido</a>
-    <a asp-area="" asp-controller="Pedido" asp-action="RestaurarDatos">Restaurar Datos</a>
+<div class="overflow-x-auto">
+  <div class="min-w-screen min-h-screen bg-gray-100 flex items-center justify-center bg-gray-100 font-sans overflow-hidden">
+    <div class="w-full lg:w-5/6">
+      <div class="bg-white shadow-md rounded my-6">
+        <table class="min-w-max w-full table-auto">
+          <thead>
+            <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+              <th class="py-3 px-6 text-center">Número Pedido</th>
+              <th class="py-3 px-6 text-center">Observaciones</th>
+              <th class="py-3 px-6 text-center">Estado</th>
+              <th class="py-3 px-6 text-center">IdCliente</th>
+              <th class="py-3 px-6 text-center">IdCadete</th>
+              @if (Context.Session.GetString("rol") == "Administrador")
+              {
+                <th class="py-3 px-6 text-center">Acciones</th>
+              }
+            </tr>
+          </thead>
+          <tbody class="text-gray-600 text-sm font-light">
+            @foreach (var pedido in Model.ListadoPedidos!)
+            {
+              <tr class="border-b border-gray-200 hover:bg-gray-100">
+                <td class="py-3 px-6 text-left whitespace-nowrap">
+                  <div class="flex item-center justify-center">
+                    <span class="font-medium">@pedido.NumeroPedido</span>
+                  </div>
+                </td>
+                  <td class="py-3 px-6 text-left">
+                    <div class="flex item-center justify-center">
+                      <span>@pedido.Observaciones</span>
+                    </div>
+                  </td>
+                  <td class="py-3 px-6 text-center">
+                    <div class="flex item-center justify-center">
+                      <span>@pedido.Estado</span>
+                    </div>
+                  </td>
+                  <td class="py-3 px-6 text-center">
+                    <div class="flex item-center justify-center">
+                      <span>@pedido.IdCliente</span>
+                    </div>
+                  </td>
+                  <td class="py-3 px-6 text-center">
+                    <div class="flex item-center justify-center">
+                      <span>@pedido.IdCadete</span>
+                    </div>
+                  </td>
+                  @if (Context.Session.GetString("rol") == "Administrador")
+                  {
+                    <td class="py-3 px-6 text-center">
+                      <div class="flex item-center justify-center">
+                        <div class="w-10 mr-2 transform hover:text-purple-500 hover:scale-110">
+                          @Html.ActionLink("Editar", "EditarPedido", "Pedido", new { numeroPedido = pedido.NumeroPedido })
+                        </div>
+                        <div class="w-10 mr-2 transform hover:text-purple-500 hover:scale-110">
+                          @Html.ActionLink("Eliminar", "EliminarPedido", "Pedido", new { numeroPedido = pedido.NumeroPedido })
+                        </div>
+                      </div>
+                    </td>
+                  }
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <a 
+        class="bg-indigo-600 mt-4 py-2 px-4 rounded-2xl text-white font-semibold mb-2"
+        asp-controller="Pedido" 
+        asp-action="CrearPedido"
+      >Crear Pedido</a>
+    </div>
   </div>
-</section>
+</div>

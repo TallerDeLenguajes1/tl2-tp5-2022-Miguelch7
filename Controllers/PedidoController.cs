@@ -15,56 +15,87 @@ public class PedidoController : Controller
 {
     private readonly ILogger<CadeteController> _logger;
     private IMapper _mapper;
-    private static ListaPedidos ListadoPedidos = new ListaPedidos();
+    private readonly IRepositorioPedidos _repositorioPedidos;
 
-    public PedidoController(ILogger<CadeteController> logger, IMapper mapper)
+    public PedidoController(ILogger<CadeteController> logger, IMapper mapper, IRepositorioPedidos repositorioPedidos)
     {
         _logger = logger;
         _mapper = mapper;
+        _repositorioPedidos = repositorioPedidos;
     }
 
     public IActionResult Index()
     {
-        var pedidos = ListadoPedidos.ObtenerPedidos();
+        try 
+        {
+            if (HttpContext.Session.GetString("username") == null) return RedirectToAction("IniciarSesion", "Login");
 
-        var pedidosViewModel = _mapper.Map<List<PedidoViewModel>>(pedidos);
+            var pedidos = _repositorioPedidos.ObtenerPedidos();
 
-        ListaPedidosViewModel listadoPedidosViewModel = new ListaPedidosViewModel(pedidosViewModel);
-    
-        return View(listadoPedidosViewModel);
+            var pedidosViewModel = _mapper.Map<List<PedidoViewModel>>(pedidos);
+
+            ListaPedidosViewModel listadoPedidosViewModel = new ListaPedidosViewModel(pedidosViewModel);
+        
+            return View(listadoPedidosViewModel);
+        }
+        catch (System.Exception)
+        {
+            return View(new ListaPedidosViewModel(new List<PedidoViewModel>()));
+        }
     }
 
     [HttpGet]
     public IActionResult CrearPedido()
     {
+        string? rol = HttpContext.Session.GetString("rol");
+        if(rol != "Administrador") return RedirectToAction("Index");
+        
         return View(new PedidoViewModel());
     }
 
     [HttpPost]
     public IActionResult CrearPedido(PedidoViewModel pedidoViewModel)
     {
-        if (ModelState.IsValid)
+        try
         {
-            var pedido = _mapper.Map<Pedido>(pedidoViewModel);
-            ListadoPedidos.AgregarPedido(pedido);
+            string? rol = HttpContext.Session.GetString("rol");
+            if(rol != "Administrador") return RedirectToAction("Index");
+            
+            if (ModelState.IsValid)
+            {
+                var pedido = _mapper.Map<Pedido>(pedidoViewModel);
+                _repositorioPedidos.AgregarPedido(pedido);
+                return RedirectToAction("Index");
+            }
+            return View("CrearPedido", pedidoViewModel);
+        }
+        catch (System.Exception)
+        {
             return RedirectToAction("Index");
         }
-        return View("CrearPedido", pedidoViewModel);
     }
 
     public IActionResult EditarPedido(int numeroPedido)
     {
-        var pedidos = ListadoPedidos.ObtenerPedidos();
-
-        Pedido? pedido = pedidos.Find(p => p.NumeroPedido == numeroPedido);
-
-        if (pedido != null)
+        try
         {
-            var pedidoViewModel = _mapper.Map<PedidoViewModel>(pedido);
+            string? rol = HttpContext.Session.GetString("rol");
+            if(rol != "Administrador") return RedirectToAction("Index");
 
-            return View(pedidoViewModel);
-        } 
-        else 
+            Pedido? pedido = _repositorioPedidos.ObtenerPedidoPorNumeroPedido(numeroPedido);
+
+            if (pedido != null)
+            {
+                var pedidoViewModel = _mapper.Map<PedidoViewModel>(pedido);
+
+                return View(pedidoViewModel);
+            } 
+            else 
+            {
+                return RedirectToAction("Index");
+            }
+        }
+        catch (System.Exception)
         {
             return RedirectToAction("Index");
         }
@@ -73,23 +104,43 @@ public class PedidoController : Controller
     [HttpPost]
     public IActionResult EditarPedido(PedidoViewModel pedidoViewModel)
     {
-        if (ModelState.IsValid)
+        try
         {
-            var pedido = _mapper.Map<Pedido>(pedidoViewModel);
+            string? rol = HttpContext.Session.GetString("rol");
+            if(rol != "Administrador") return RedirectToAction("Index");
 
-            ListadoPedidos.EditarPedido(pedido);
+            if (ModelState.IsValid)
+            {
+                var pedido = _mapper.Map<Pedido>(pedidoViewModel);
 
+                _repositorioPedidos.EditarPedido(pedido);
+
+                return RedirectToAction("Index");
+            }
+
+            return View("EditarPedido", pedidoViewModel);
+        }
+        catch (System.Exception)
+        {
             return RedirectToAction("Index");
         }
-
-        return View("EditarPedido", pedidoViewModel);
     }
 
     [HttpGet]
     public IActionResult EliminarPedido(int numeroPedido)
     {
-        ListadoPedidos.EliminarPedido(numeroPedido);
-        return RedirectToAction("Index");
+        try
+        {
+            string? rol = HttpContext.Session.GetString("rol");
+            if(rol != "Administrador") return RedirectToAction("Index");
+
+            _repositorioPedidos.EliminarPedido(numeroPedido);
+            return RedirectToAction("Index");
+        }
+        catch (System.Exception)
+        {
+            return RedirectToAction("Index");
+        }
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

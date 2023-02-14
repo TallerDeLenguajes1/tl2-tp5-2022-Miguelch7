@@ -1,29 +1,52 @@
 @model SistemaCadeteriaMVC.ViewModels.PedidoViewModel
 
-<section>
-  <h1 class="text-center">Editar pedido</h1>
-  <form asp-controller="Pedido" asp-action="EditarPedido" method="POST" >
-    <label asp-for="@Model.Observaciones"> @Html.DisplayNameFor(Model => Model.Observaciones) 
-      <input name="observaciones" type="text" value="@Model.Observaciones">
-    </label>
-    <span class="form-control" asp-validation-for="@Model.Observaciones"></span>
-
-    <label asp-for="@Model.Realizado"> @Html.DisplayNameFor(Model => Model.Realizado) 
-      <input name="realizado" type="text" value="@Model.Realizado">
-    </label>
-    <span class="form-control" asp-validation-for="@Model.Realizado"></span>
-
-    <label asp-for="@Model.IdCliente"> @Html.DisplayNameFor(Model => Model.IdCliente)
-      <input name="idCliente" type="text" value="@Model.IdCliente">
-    </label>
-    <span class="form-control" asp-validation-for="@Model.IdCliente"></span>
-
-    <label asp-for="@Model.IdCadete"> @Html.DisplayNameFor(Model => Model.IdCadete)
-      <input name="idCadete" type="text" value="@Model.IdCadete">
-    </label>
-    <span class="form-control" asp-validation-for="@Model.IdCadete"></span>
-
-    <input type="submit" value="Guardar cambios">
+<section class="flex w-full justify-center py-10 items-center bg-white">
+  <form class="bg-white w-1/3" asp-controller="Pedido" asp-action="EditarPedido" method="POST">
+    <h1 class="text-gray-800 font-bold text-2xl mb-7">Editar Pedido</h1>
+    <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
+      <input
+        class="pl-2 outline-none border-none w-full"
+        type="text"
+        name="observaciones"
+        id="observaciones"
+        placeholder="@Html.DisplayNameFor(Model => Model.Observaciones)"
+        value="@Model.Observaciones"
+      />
+    </div>
+    <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
+      <select id="estado" name="estado" class="pl-2 outline-none border-none w-full" placeholder="@Html.DisplayNameFor(Model => Model.Estado)">
+        <option value="@Estado.SinAsignar">Sin Asignar</option>
+        <option value="@Estado.Pendiente">Pendiente</option>
+        <option value="@Estado.EnCurso">En Curso</option>
+        <option value="@Estado.Entregado">Entregado</option>
+      </select>
+    </div>
+    <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
+      <input
+        class="pl-2 outline-none border-none w-full"
+        type="number"
+        name="idCliente"
+        id="idCliente"
+        placeholder="@Html.DisplayNameFor(Model => Model.IdCliente)"
+        value="@Model.IdCliente"
+      />
+    </div>
+    <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
+      <input
+        class="pl-2 outline-none border-none w-full"
+        type="number"
+        name="idCadete"
+        id="idCadete"
+        placeholder="@Html.DisplayNameFor(Model => Model.IdCadete)"
+        value="@Model.IdCadete"
+      />
+    </div>
+    <button
+      type="submit"
+      class="block w-full bg-indigo-600 mt-4 py-2 rounded-2xl text-white font-semibold mb-2"
+    >
+      Editar Pedido
+    </button>
   </form>
 </section>
 

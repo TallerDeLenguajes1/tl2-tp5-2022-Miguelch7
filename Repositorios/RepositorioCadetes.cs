@@ -110,7 +110,7 @@ public class RepositorioCadetes : IRepositorioCadetes
   {
     try
     {
-      string query = "INSERT INTO cadete (nombre, direccion, telefono) VALUES(@nombre, @direccion, @telefono)";
+      string query = $"INSERT INTO cadete (nombre, direccion, telefono) VALUES(@nombre, @direccion, @telefono)";
 
       using (SQLiteConnection connection = new SQLiteConnection(ConnectionString))
       {
@@ -123,7 +123,7 @@ public class RepositorioCadetes : IRepositorioCadetes
         command.Parameters.Add(new SQLiteParameter("@telefono", cadete.Telefono));
 
         command.ExecuteNonQuery();
-
+        
         connection.Close();
       }
 

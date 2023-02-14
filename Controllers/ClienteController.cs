@@ -26,46 +26,78 @@ public class ClienteController : Controller
 
     public IActionResult Index()
     {
-        var clientes = _repositorioClientes.ObtenerClientes();
+        try 
+        {
+            if (HttpContext.Session.GetString("username") == null) return RedirectToAction("IniciarSesion", "Login");
 
-        var clientesViewModel = _mapper.Map<List<ClienteViewModel>>(clientes);
+            var clientes = _repositorioClientes.ObtenerClientes();
 
-        ListaClientesViewModel listaClientesViewModel = new ListaClientesViewModel(clientesViewModel);
-    
-        return View(listaClientesViewModel);
+            var clientesViewModel = _mapper.Map<List<ClienteViewModel>>(clientes);
+
+            ListaClientesViewModel listaClientesViewModel = new ListaClientesViewModel(clientesViewModel);
+        
+            return View(listaClientesViewModel);
+        }
+        catch (System.Exception)
+        {
+            return View(new ListaClientesViewModel(new List<ClienteViewModel>()));
+        }
     }
 
     [HttpGet]
     public IActionResult CrearCliente()
     {
+        string? rol = HttpContext.Session.GetString("rol");
+        if(rol != "Administrador") return RedirectToAction("Index");
+
         return View(new ClienteViewModel());
     }
 
     [HttpPost]
     public IActionResult CrearCliente(ClienteViewModel clienteViewModel)
     {
-        if (ModelState.IsValid)
+        try
         {
-            var cliente = _mapper.Map<Cliente>(clienteViewModel);
-            _repositorioClientes.AgregarCliente(cliente);
+            string? rol = HttpContext.Session.GetString("rol");
+            if(rol != "Administrador") return RedirectToAction("Index");
+
+            if (ModelState.IsValid)
+            {
+                var cliente = _mapper.Map<Cliente>(clienteViewModel);
+                _repositorioClientes.AgregarCliente(cliente);
+                return RedirectToAction("Index");
+            }
+            return View("CrearCliente", clienteViewModel);
+        }
+        catch (System.Exception)
+        {
             return RedirectToAction("Index");
         }
-        return View("CrearCliente", clienteViewModel);
     }
 
     public IActionResult EditarCliente(int id)
     {
-        var clientes = _repositorioClientes.ObtenerClientes();
-
-        Cliente? cliente = clientes.Find(c => c.Id == id);
-
-        if (cliente != null)
+        try
         {
-            var clienteViewModel = _mapper.Map<ClienteViewModel>(cliente);
+            string? rol = HttpContext.Session.GetString("rol");
+            if(rol != "Administrador") return RedirectToAction("Index");
 
-            return View(clienteViewModel);
-        } 
-        else 
+            var clientes = _repositorioClientes.ObtenerClientes();
+
+            Cliente? cliente = clientes.Find(c => c.Id == id);
+
+            if (cliente != null)
+            {
+                var clienteViewModel = _mapper.Map<ClienteViewModel>(cliente);
+
+                return View(clienteViewModel);
+            } 
+            else 
+            {
+                return RedirectToAction("Index");
+            }
+        }
+        catch (System.Exception)
         {
             return RedirectToAction("Index");
         }
@@ -74,23 +106,43 @@ public class ClienteController : Controller
     [HttpPost]
     public IActionResult EditarCliente(ClienteViewModel clienteViewModel)
     {
-        if (ModelState.IsValid)
+        try
         {
-            var cliente = _mapper.Map<Cliente>(clienteViewModel);
+            string? rol = HttpContext.Session.GetString("rol");
+            if(rol != "Administrador") return RedirectToAction("Index");
 
-            _repositorioClientes.EditarCliente(cliente);
+            if (ModelState.IsValid)
+            {
+                var cliente = _mapper.Map<Cliente>(clienteViewModel);
 
+                _repositorioClientes.EditarCliente(cliente);
+
+                return RedirectToAction("Index");
+            }
+
+            return View("EditarCliente", clienteViewModel);
+        }
+        catch (System.Exception)
+        {
             return RedirectToAction("Index");
         }
-
-        return View("EditarCliente", clienteViewModel);
     }
 
     [HttpGet]
     public IActionResult EliminarCliente(int id)
     {
-        _repositorioClientes.EliminarCliente(id);
-        return RedirectToAction("Index");
+        try
+        {
+            string? rol = HttpContext.Session.GetString("rol");
+            if(rol != "Administrador") return RedirectToAction("Index");
+
+            _repositorioClientes.EliminarCliente(id);
+            return RedirectToAction("Index");
+        }
+        catch (System.Exception)
+        {
+            return RedirectToAction("Index");
+        }
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
